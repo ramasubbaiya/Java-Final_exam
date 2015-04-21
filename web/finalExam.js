@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/*=================================================================
+ * Warning. This file is fine. You should not need to change this *
+ * file at all to complete this project. If you think you do, ask *
+ * the instructor about what you're planning to do.               *
+ =================================================================*/
+
 var getProducts = function () {
     $.getJSON('./rs/products', function (data) {
         var result = '<tbody>';
