@@ -54,7 +54,7 @@ public class ProductsREST {
     @Path("{id}")
     @Produces("application/json")
     public Response getById(@PathParam("id") int id) {
-        // TODO: Replace with call to controller
+        // TODO: Use controller's getById method to get a Product, then use toJson
         return null;
     }
 
@@ -76,14 +76,14 @@ public class ProductsREST {
     @Path("{id}")
     @Consumes("application/json")
     public Response set(@PathParam("id") int id, JsonObject json) {
-        // TODO: Replace with call to controller
+        // TODO: Use controller's set method
         return null;
     }
     
     @DELETE
     @Path("{id}")
     public Response set(@PathParam("id") int id) {
-        // TODO: Replace with call to controller
+        // TODO: Use controller's delete method
         return null;
     }
 }

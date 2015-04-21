@@ -80,7 +80,9 @@ public class ProductsController {
         pstmt.setInt(2, p.getVendorId());
         int result = pstmt.executeUpdate();
         
-        // Fix to check actual Product ID as Auto-Incremented in DB
+        // Name is Unique and ProductId is auto-incremented, so we can find
+        // the actual ProductId based on the Name
+        // -- Vendors does not have this issues --
         sql = "SELECT ProductId FROM Products WHERE Name = ?";
         pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, p.getName());

@@ -15,9 +15,7 @@
  */
 package com.abcindustries.rest;
 
-import com.abcindustries.controllers.VendorsController;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -34,12 +32,12 @@ import javax.ws.rs.core.Response;
 @Path("vendors")
 @RequestScoped
 public class VendorsREST {
-    // TODO: Figure out Controller
+    // TODO: Inject the Controller
     
     @GET
     @Produces("application/json")
     public Response getAll() {
-        // TODO: Replace with call to controller
+        // TODO: Use controller's toJson method
         return null;
     }
     
@@ -47,14 +45,14 @@ public class VendorsREST {
     @Path("{id}")
     @Produces("application/json")
     public Response getById(@PathParam("id") int id) {
-        // TODO: Replace with call to controller
+        // TODO: Use controller's getById method to get a Product, then use toJson
         return null;
     }
 
     @POST
     @Consumes("application/json")
     public Response add(JsonObject json) {
-        // TODO: Replace with call to controller
+        // TODO: Use controller's add method
         return null;
     }
     

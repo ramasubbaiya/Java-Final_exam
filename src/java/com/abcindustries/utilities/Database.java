@@ -29,6 +29,8 @@ public class Database {
     public static Connection getConnection() {        
         Connection result = null;
         try {
+            // TODO: Make sure that you change the credentials to match your
+            //       own student number
             Class.forName("com.mysql.jdbc.Driver");
             String server = "ipro.lambton.on.ca";
             String database = "c0xxxxxx-java";
