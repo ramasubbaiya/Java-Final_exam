@@ -1,5 +1,6 @@
 /*
  * Copyright 2015 Len Payne <len.payne@lambtoncollege.ca>.
+ * Updated 2015 Mark Russell <mark.russell@lambtoncollege.ca>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -37,12 +39,13 @@ import javax.ws.rs.core.Response;
  *
  * @author Len Payne <len.payne@lambtoncollege.ca>
  */
+
 @Path("products")
 @RequestScoped
 public class ProductsREST {
 
     @Inject
-    ProductsController products;
+    private ProductsController products;
 
     @GET
     @Produces("application/json")
@@ -54,8 +57,11 @@ public class ProductsREST {
     @Path("{id}")
     @Produces("application/json")
     public Response getById(@PathParam("id") int id) {
-        // TODO: Use controller's getById method to get a Product, then use toJson
-        return null;
+       try{
+            return Response.ok(products.getById(id).toJson()).build();
+        } catch(Exception ex){
+            return Response.status(500).build();
+        }
     }
 
     @POST
@@ -72,18 +78,30 @@ public class ProductsREST {
         return response;
     }
     
+    
     @PUT
     @Path("{id}")
     @Consumes("application/json")
     public Response set(@PathParam("id") int id, JsonObject json) {
-        // TODO: Use controller's set method
-        return null;
+        try {
+            Product prod = new Product(json);
+            products.set(id, prod);
+            return Response.ok().build();
+        } catch (SQLException ex) {
+            return Response.status(500).build();
+
+        }
     }
     
     @DELETE
     @Path("{id}")
+    @Consumes("application/json")
     public Response set(@PathParam("id") int id) {
-        // TODO: Use controller's delete method
-        return null;
+        try {
+            products.delete(id);
+            return Response.ok().build();
+        } catch (SQLException ex) {
+            return Response.status(500).build();
+        }
     }
 }

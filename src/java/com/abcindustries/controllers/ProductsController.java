@@ -1,5 +1,6 @@
 /*
  * Copyright 2015 Len Payne <len.payne@lambtoncollege.ca>.
+ * Updated 2015 Mark Russell <mark.russell@lambtoncollege.ca>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +24,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
+import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 
 /**
  *
@@ -33,35 +36,42 @@ import javax.json.JsonArray;
 public class ProductsController {
 
     List<Product> productList;
-
-    public ProductsController() {        
+    //Constructor ProductsController that selects all the products
+    public ProductsController() {
         productList = new ArrayList<>();
         try {
             Connection conn = Database.getConnection();
-            String sql = "SELECT * FROM Products";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
+            String query = "SELECT * FROM Products";
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
                 productList.add(new Product(
-                        rs.getInt("productId"),
-                        rs.getString("name"),
-                        rs.getInt("vendorId")
+                        resultSet.getInt("productId"),
+                        resultSet.getString("name"),
+                        resultSet.getInt("vendorId")
                 ));
             }
         } catch (SQLException ex) {
             Logger.getLogger(ProductsController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    //List that selects all the products
     public List<Product> getAll() {
         return productList;
     }
-
+    
+    // Creates a JSON 
     public JsonArray toJson() {
         // TODO: Build a JsonArray object from the List
-        return null;
+        JsonArrayBuilder json = Json.createArrayBuilder();
+        productList.stream().forEach((p) -> {
+            json.add(p.toJson());
+        });
+        return json.build();
     }
-
+    
+    //Results by product Id
     public Product getById(int id) {
         Product result = null;
         for (int i = 0; i < productList.size() && result == null; i++) {
@@ -72,34 +82,68 @@ public class ProductsController {
         return result;
     }
 
+    //To insert a product
     public void add(Product p) throws SQLException {
         Connection conn = Database.getConnection();
-        String sql = "INSERT INTO Products (Name, VendorId) VALUES (?, ?)";
-        PreparedStatement pstmt = conn.prepareStatement(sql);
+        String query = "INSERT INTO Products (Name, VendorId) VALUES (?, ?)";
+        PreparedStatement pstmt = conn.prepareStatement(query);
         pstmt.setString(1, p.getName());
         pstmt.setInt(2, p.getVendorId());
         int result = pstmt.executeUpdate();
-        
+
         // Name is Unique and ProductId is auto-incremented, so we can find
         // the actual ProductId based on the Name
-        // -- Vendors does not have this issues --
-        sql = "SELECT ProductId FROM Products WHERE Name = ?";
-        pstmt = conn.prepareStatement(sql);
+        // -- Vendors does not have this issue --
+        query = "SELECT ProductId FROM Products WHERE Name = ?";
+        pstmt = conn.prepareStatement(query);
         pstmt.setString(1, p.getName());
         ResultSet rs = pstmt.executeQuery();
         rs.next();
         p.setProductId(rs.getInt("ProductId"));
-        
+
         if (result == 1) {
             productList.add(p);
         }
     }
-
+    
+    //To update(edit) a product(existing)
     public void set(int id, Product p) throws SQLException {
         // TODO: Similar to the add() method
-    }
+        Connection conn = Database.getConnection();
+        String query = "UPDATE Products SET name = ?, vendorId = ? WHERE productId =  ";
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        pstmt.setString(1, p.getName());
+        pstmt.setInt(2, p.getVendorId());
+        int result = pstmt.executeUpdate();
 
+        // Name is Unique and ProductId is auto-incremented, so we can find
+        // the actual ProductId based on the Name
+        // -- Vendors does not have this issue --
+        query = "SELECT ProductId FROM Products WHERE Name = ?";
+        pstmt = conn.prepareStatement(query);
+        pstmt.setString(1, p.getName());
+        ResultSet rs = pstmt.executeQuery();
+        rs.next();
+        p.setProductId(rs.getInt("ProductId"));
+
+        if (result == 1) {
+            Product original = getById(id);
+            original.setName(p.getName());
+            original.setVendorId(p.getVendorId());
+        }
+    }
+    
+    //To delete a record(row) from product
     public void delete(int id) throws SQLException {
         // TODO: Remember to delete from both the List and the DB
+        Connection conn = Database.getConnection();
+        String query = "DELETE FROM Products WHERE productId =  ";
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        int result = pstmt.executeUpdate();
+
+        if (result == 1) {
+            Product original = getById(id);
+            productList.remove(original);
+        }
     }
 }

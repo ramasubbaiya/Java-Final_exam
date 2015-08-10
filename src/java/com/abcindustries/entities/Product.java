@@ -1,5 +1,6 @@
 /*
  * Copyright 2015 Len Payne <len.payne@lambtoncollege.ca>.
+ * Updated 2015 Mark Russell <mark.russell@lambtoncollege.ca>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,43 +30,51 @@ public class Product {
 
     public Product() {
     }
-
+    
+    //Constructor
     public Product(int productId, String name, int vendorId) {
         this.productId = productId;
         this.name = name;
         this.vendorId = vendorId;
     }
-    
+    //Creates json obkect
     public Product(JsonObject json) {
         productId = json.getInt("productId");
         name = json.getString("name");
         vendorId = json.getInt("vendorId");
     }
-
+    
+    //get product Id
     public int getProductId() {
         return productId;
     }
-
+    
+    //set product Id
     public void setProductId(int productId) {
         this.productId = productId;
     }
 
+    //get name
     public String getName() {
         return name;
     }
-
+    
+    //set name
     public void setName(String name) {
         this.name = name;
     }
-
+    
+    //get vendor id
     public int getVendorId() {
         return vendorId;
     }
-
+    
+    //set vendor Id
     public void setVendorId(int vendorId) {
         this.vendorId = vendorId;
     }
     
+    //tojson
     public JsonObject toJson() {
         return Json.createObjectBuilder()
                 .add("productId", productId)
